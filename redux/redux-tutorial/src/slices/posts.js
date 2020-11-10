@@ -1,4 +1,4 @@
-import {createSlice} from '@reduxjs/toolkit'
+import { createSlice } from '@reduxjs/toolkit'
 
 export const initialState = {
   loading: false,
@@ -6,38 +6,31 @@ export const initialState = {
   posts: [],
 }
 
-// A slice for posts with our three reducers
 const postsSlice = createSlice({
-    name: 'posts',
-    initialState,
-    reducers: {
-      getPosts: (state) => {
-        state.loading = true
-      },
-      getPostsSuccess: (state, {payload}) => {
-        state.posts = payload
-        state.loading = false
-        state.hasErrors = false
-      },
-      getPostsFailure: (state) => {
-        state.loading = false
-        state.hasErrors = true
-      },
+  name: 'posts',
+  initialState,
+  reducers: {
+    getPosts: state => {
+      state.loading = true
     },
-  })
+    getPostsSuccess: (state, { payload }) => {
+      state.posts = payload
+      state.loading = false
+      state.hasErrors = false
+    },
+    getPostsFailure: state => {
+      state.loading = false
+      state.hasErrors = true
+    },
+  },
+})
 
-  // Three actions generated from the slice
-export const {getPosts, getPostsSuccess, getPostsFailure} = postsSlice.actions
-
-// A selector
-export const postsSelector = (state) => state.posts
-
-// The reducer
+export const { getPosts, getPostsSuccess, getPostsFailure } = postsSlice.actions
+export const postsSelector = state => state.posts
 export default postsSlice.reducer
 
-// Asynchronous thunk action
 export function fetchPosts() {
-  return async (dispatch) => {
+  return async dispatch => {
     dispatch(getPosts())
 
     try {

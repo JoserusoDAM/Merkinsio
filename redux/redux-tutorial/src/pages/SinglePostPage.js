@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux'
 
 import { fetchPost, postSelector } from '../slices/post'
 import { fetchComments, commentsSelector } from '../slices/comments'
@@ -7,15 +7,16 @@ import { fetchComments, commentsSelector } from '../slices/comments'
 import { Post } from '../components/Post'
 import { Comment } from '../components/Comment'
 
-const SinglePostPage = () => {
-
-  const dispatch = useDispatch();
+const SinglePostPage = ({ match }) => {
+  const dispatch = useDispatch()
+  const { post, loading: postLoading, hasErrors: postHasErrors } = useSelector(
+    postSelector
+  )
   const {
-    match,
-    post,
     comments,
-    hasErrors,
-    loading } = useSelector(postSelector, commentsSelector)
+    loading: commentsLoading,
+    hasErrors: commentsHasErrors,
+  } = useSelector(commentsSelector)
 
   useEffect(() => {
     const { id } = match.params
@@ -25,15 +26,15 @@ const SinglePostPage = () => {
   }, [dispatch, match])
 
   const renderPost = () => {
-    if (loading.post) return <p>Loading post...</p>
-    if (hasErrors.post) return <p>Unable to display post.</p>
+    if (postLoading) return <p>Loading post...</p>
+    if (postHasErrors) return <p>Unable to display post.</p>
 
     return <Post post={post} />
   }
 
   const renderComments = () => {
-    if (loading.comments) return <p>Loading comments...</p>
-    if (hasErrors.comments) return <p>Unable to display comments.</p>
+    if (commentsLoading) return <p>Loading comments...</p>
+    if (commentsHasErrors) return <p>Unable to display comments.</p>
 
     return comments.map(comment => (
       <Comment key={comment.id} comment={comment} />
@@ -48,7 +49,5 @@ const SinglePostPage = () => {
     </section>
   )
 }
-
-
 
 export default SinglePostPage
