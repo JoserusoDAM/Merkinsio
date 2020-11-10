@@ -9,14 +9,13 @@ import { Comment } from '../components/Comment'
 
 const SinglePostPage = ({ match }) => {
   const dispatch = useDispatch()
-  const { post, loading: postLoading, hasErrors: postHasErrors } = useSelector(
-    postSelector
-  )
+  const { post,
+    loading: postLoading,
+    hasErrors: postHasErrors } = useSelector(postSelector)
   const {
     comments,
     loading: commentsLoading,
-    hasErrors: commentsHasErrors,
-  } = useSelector(commentsSelector)
+    hasErrors: commentsHasErrors } = useSelector(commentsSelector)
 
   useEffect(() => {
     const { id } = match.params
