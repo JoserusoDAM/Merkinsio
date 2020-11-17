@@ -1,0 +1,38 @@
+CREAR PROYECTO NUEVO CON UNA TABLA QUE SEA LA VISTA DIRECTAMENTE
+
+--------------TABLES--------------
+
+CREATE TABLE `sys`.`products` (
+  `idproducts` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(45) NOT NULL,
+  `price` DECIMAL(6,2) NOT NULL,
+  `cid` INT NULL,
+  `uid` INT NULL,
+  PRIMARY KEY (`idproducts`),
+  INDEX `uid_idx` (`uid` ASC) VISIBLE,
+  INDEX `cid_idx` (`cid` ASC) VISIBLE,
+  CONSTRAINT `uid`
+    FOREIGN KEY (`uid`)
+    REFERENCES `sys`.`users` (`uid`)
+    ON DELETE SET NULL
+    ON UPDATE SET NULL,
+  CONSTRAINT `cid`
+    FOREIGN KEY (`cid`)
+    REFERENCES `sys`.`category` (`cid`)
+    ON DELETE SET NULL
+    ON UPDATE SET NULL);
+
+
+CREATE TABLE IF NOT EXISTS category (
+    cid INT AUTO_INCREMENT,
+    name VARCHAR(255),
+    PRIMARY KEY (cid)
+);
+
+CREATE TABLE IF NOT EXISTS users (
+    uid INT AUTO_INCREMENT,
+    name VARCHAR(255),
+    lastName VARCHAR(255),
+    mail VARCHAR(255),
+    PRIMARY KEY (uid)
+);

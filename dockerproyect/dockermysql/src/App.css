@@ -1,0 +1,14 @@
+label {
+    display: inline-block;
+    width: 140px;
+    text-align: left;
+  }​
+
+input {
+    display: inline-block;
+    float: left;
+}
+
+button {
+    margin: 3px;
+}
