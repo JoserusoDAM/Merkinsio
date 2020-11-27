@@ -1,9 +1,7 @@
 import React from 'react'
 
 const Actions = ({ row, onDelete, onEdit }) => {
-    // los botones cada uno con la accion del click que vienen definidas en la tabla, aqui
-    // solo les digo que van a recibir un click, pero la funcion viene definita en la tabla que es
-    // donde los llamo. Cada uno recibe una fila por parametro 
+    // declare the actions but dont implements here
     return (
         <div>
             <button type="button"

@@ -10,28 +10,29 @@ import { getList, getCategory } from '../services/list'
 
 
 const Table = () => {
-  // estado para manejar los datos que traigo de la api
+  // states from the api
   const [list, setList] = useState([]);
   const [category, setCategory] = useState([]);
 
-  // este estado lo uso para traer los valores de la tabla y cargarlos en el modal
+  // selected item state to gives it to the modal
   const [selectedItem, setSelectedItem] = useState();
 
-  // el estado del modal
+  // moda state
   const [editModal, setEditModal] = useState();
-  // esta funcion se llama cuando clico el boton update y da valores al selected item
-  // de la row y activa el modal
+  // Gives the values from thr row to the selected items and dispose or show the modal
   const handleEdit = (row) => {
     setSelectedItem(row);
     setEditModal(true);
   }
 
+  // brings the data from the appi
   const fetchData = () => {
     getList()
     .then(items => {
+      console.log(items)
         setList(items)
     })}
-  // Brgins the data to set the state to the product list
+
   useEffect(() => {
     fetchData()
   }, [])
@@ -49,6 +50,13 @@ const Table = () => {
     return () => mounted = false;
   }, [])
 
+  // Api call to delete the item then fetch the new data
+  const deleteItem = async (id) => {
+    await fetch(`http://localhost:4040/api/product/${id}`, {
+      method: 'DELETE'
+    })
+    fetchData()
+  }
 
   const columns = [{
     dataField: 'idproducts',
@@ -64,7 +72,7 @@ const Table = () => {
     sort: true
   },
   {
-    dataField: 'cid',
+    dataField: 'category',  // aqui seria name de categoria
     text: 'Product category',
     sort: true
   },
@@ -77,7 +85,7 @@ const Table = () => {
     dataField: 'actions',
     text: 'Actions',
     formatter: (cell, row, rowIndex) => {
-      // las acciones le paso esos parametros para saber que fila borrar y que fila editar
+      // Actions of deleting or updating
       return <Actions
         row={row}
         onDelete={deleteItem}
@@ -88,22 +96,13 @@ const Table = () => {
   ];
 
   const defaultSorted = [{
-    dataField: 'name',
-    order: 'desc'
+    dataField: 'idproducts',
+    order: 'asc'
   }];
-
-  const deleteItem = async (id) => {
-    await fetch(`http://localhost:4040/api/product/${id}`, {
-      method: 'DELETE'
-    })
-    fetchData()
-  }
-
 
   return (
     <div style={{ marginLeft: 25, marginRight: 25 }}>
       <div style={{ margin: 10 }}>
-        {/*el toogle muestra el modal */}
         <InsertModal toggle={() => setEditModal(false)} buttonLabel="Insert product" />
       </div>
       <BootstrapTable
@@ -117,7 +116,6 @@ const Table = () => {
         fetch={() => fetchData}
         isOpen={editModal}
         toggle={() => setEditModal(false)}
-        // la prop selected item me carga los datos en el modal
         selectedItem={selectedItem}
       />
     </div>

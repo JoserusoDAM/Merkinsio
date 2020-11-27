@@ -7,14 +7,16 @@ type Product struct {
 	Price      float64 `json:"price" db:"price"`
 	CID        uint64  `json:"cid" db:"cid"`
 	UID        uint64  `json:"uid" db:"uid"`
+	Category   string  `json:"category" db:"category"`
 }
 
 //GetAllProducts retrieves all the Products
 func GetAllProducts() ([]Product, error) {
 	result := []Product{}
 
-	query := `SELECT * FROM products`
-
+	//query := `SELECT * FROM products`
+	//	query := `SELECT * , (select name from category where cid = p.cid) as category_name from products p`
+	query := `SELECT p.idproducts, p.name as name, p.price, p.cid, uid, c.name as category FROM products p JOIN category c ON p.cid = c.cid`
 	if err := DB.Select(&result, query); err != nil {
 		return nil, err
 	}

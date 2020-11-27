@@ -19,20 +19,19 @@ const UpdateModal = (props) => {
     const [category, setCategory] = useState();
     const [idproducts, setIdproducts] = useState()
 
-    const editProduct = () => {
-        updateItem(
+    const editProduct = async () => {
+        await updateItem(
             {
                 idproducts: idproducts,
                 name: name,
-                price: 999,
-                cid: 2,
+                price: parseInt(price),
+                cid: parseInt(category),
                 uid: 2,
             }
         )
         fetch()
         toggle()
     }
-
 
     // los handlers para que den valor a los estados cuando escribo en los imput
     const handleName = (e) => {
@@ -61,8 +60,8 @@ const UpdateModal = (props) => {
             setIdproducts(rowEdit.idproducts)
             setName(rowEdit.name)
             setPrice(rowEdit.price)
-            setId(rowEdit.user)
-            setCategory(rowEdit.category)
+            setId(rowEdit.uid)
+            setCategory(rowEdit.cid)
         }
     }, [rowEdit])
 
@@ -73,8 +72,8 @@ const UpdateModal = (props) => {
                 setIdproducts(selectedItem.idproducts)
                 setName(selectedItem.name)
                 setPrice(selectedItem.price)
-                setId(selectedItem.user)
-                setCategory(selectedItem.category)
+                setId(selectedItem.uid)
+                setCategory(selectedItem.cid)
             }
         }, [selectedItem]);
 
@@ -109,16 +108,18 @@ const UpdateModal = (props) => {
                             type="text"
                             placeholder="user id"
                             value={id}
-                            onChange={handleId}>
+                            onChange={handleId}
+                            disabled
+                            >
                         </input>
                         <br />
                         <label>Category</label>
                         <select onChange={handleCategory} value={category} name="category">
-                            <option value="sports">Sports</option>
-                            <option value="movies">Movies</option>
-                            <option value="jewlery">Jewlery</option>
-                            <option value="books">Books</option>
-                            <option value="miscellaneous">Miscellaneous</option>
+                            <option value="1">Food</option>
+                            <option value="2">Books</option>
+                            <option value="3">Movies</option>
+                            <option value="4">Games</option>
+                            <option value="5">Gifts</option>
                         </select>
                     </div>
                 </ModalBody>

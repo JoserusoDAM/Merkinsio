@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import '../App.css'
 import { setItem } from '../services/list'
+import { getList, getCategory } from '../services/list'
 
 
 const InsertModal = (props) => {
@@ -10,33 +11,62 @@ const InsertModal = (props) => {
         className
     } = props;
 
-    // aqui si controlo que el modal se mueste o no porque lo llamo directamente desde la tabla
-    // en el caso del update es distinto porque el boton esta en las acction, este boton esta directamente
-    // en la vista de la tabla por lo que puede tener la prop toggle para mostrarlo
+    // state of the modal to show ir or dispose it
     const [modal, setModal] = useState(false);
     const toggle = () => {
         setModal(!modal)
     };
 
+    // inputs states
     const [name, setName] = useState("");
     const [price, setPrice] = useState();
     const [id, setId] = useState("");
     const [category, setCategory] = useState();
 
+    // state from the api
+    const [list, setList] = useState([]);
+    const fetchData = () => {
+        getList()
+        .then(items => {
+            setList(items)
+        })}
+      // Brgins the data to set the state to the product list
+      useEffect(() => {
+        fetchData()
+      }, [])
 
-    const sendData = () => {
-        setItem(
+    // fuction to send the data to the db
+    const sendData = async () => {
+        await  setItem(
             {
                 name: name,
                 price: parseFloat(price),
-                cid: 2,
-                uid: 2,
+                cid: parseInt(category),
+                uid: 1,
             }
         )
+        fetchData()
         toggle()
     }
-
-    // el resto del componente es igual los handler y los value
+    
+    /*
+    const sendData = () => {
+        setItem(
+               {
+                   name: name,
+                   price: parseFloat(price),
+                   cid: 1,
+                   uid: 1,
+               },
+               (data) => {
+                   fetchData()
+           toggle()
+               }
+           )
+   
+       }
+       */
+    // handlers from the inputs
     const handleName = (e) => {
         e.preventDefault()
         setName(e.target.value)
@@ -67,7 +97,7 @@ const InsertModal = (props) => {
                         <label >Name:</label>
                         <input
                             type="text"
-                            placeholder="prodouct name"
+                            placeholder="Prodouct name"
                             value={name}
                             onChange={handleName}>
                         </input>
@@ -75,7 +105,7 @@ const InsertModal = (props) => {
                         <label >Price: </label>
                         <input
                             type="number"
-                            placeholder="prodouct price"
+                            placeholder="Prodouct price"
                             value={price}
                             onChange={handlePrice}>
                         </input>
@@ -83,18 +113,20 @@ const InsertModal = (props) => {
                         <label >User ID:</label>
                         <input
                             type="text"
-                            placeholder="user id"
+                            placeholder="User id"
                             value={id}
-                            onChange={handleId}>
+                            onChange={handleId}
+                            disabled
+                            >
                         </input>
                         <br />
                         <label>Category</label>
                         <select onChange={handleCategory} value={category} name="category">
-                            <option value="Sports">Sports</option>
-                            <option value="movies">Movies</option>
-                            <option value="jewlery">Jewlery</option>
-                            <option value="Books">Books</option>
-                            <option value="miscellaneous">Miscellaneous</option>
+                            <option value="1">Food</option>
+                            <option value="2">Books</option>
+                            <option value="3">Movies</option>
+                            <option value="4">Games</option>
+                            <option value="5">Gifts</option>
                         </select>
                     </div>
                 </ModalBody>
