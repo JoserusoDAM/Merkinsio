@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import BootstrapTable from 'react-bootstrap-table-next';
 import paginationFactory from 'react-bootstrap-table2-paginator';
@@ -6,9 +6,13 @@ import paginationFactory from 'react-bootstrap-table2-paginator';
 import InsertModal from '../components/InsertModal'
 import UpdateModal from '../components/UpdateModal'
 import Actions from '../components/Actions'
+import { getList, getCategory } from '../services/list'
 
 
 const Table = () => {
+  // estado para manejar los datos que traigo de la api
+  const [list, setList] = useState([]);
+  const [category, setCategory] = useState([]);
 
   // este estado lo uso para traer los valores de la tabla y cargarlos en el modal
   const [selectedItem, setSelectedItem] = useState();
@@ -18,98 +22,36 @@ const Table = () => {
   // esta funcion se llama cuando clico el boton update y da valores al selected item
   // de la row y activa el modal
   const handleEdit = (row) => {
-    setSelectedItem(row)
+    setSelectedItem(row);
     setEditModal(true);
   }
 
-  const [row, setRow] = useState([{
-    id: 1,
-    name: 'Whistle',
-    price: '7 €',
-    category: 'sports',
-    user: '01'
-  },
-  {
-    id: 2,
-    name: 'Dumbbells',
-    price: '250 €',
-    category: 'sports',
-    user: '01'
-  },
-  {
-    id: 3,
-    name: 'E.T',
-    price: '30 €',
-    category: 'movies',
-    user: '01'
-  },
-  {
-    id: 4,
-    name: 'Diamond',
-    price: '2500 €',
-    category: 'jewlery',
-    user: '01'
-  },
-  {
-    id: 5,
-    name: 'Ball',
-    price: '35 €',
-    category: 'sports',
-    user: '01'
-  },
-  {
-    id: 6,
-    name: 'Random thing',
-    price: '250 €',
-    category: 'miscellaneous',
-    user: '01'
-  },
-  {
-    id: 7,
-    name: 'Hamlet',
-    price: '30 €',
-    category: 'Books',
-    user: '01'
-  },
-  {
-    id: 8,
-    name: 'Another random thing',
-    price: '250 €',
-    category: 'miscellaneous',
-    user: '01'
-  },
-  {
-    id: 9,
-    name: 'Ring',
-    price: '150 €',
-    category: 'jewlery',
-    user: '01'
-  },
-  {
-    id: 10,
-    name: 'Polar Vantage',
-    price: '499 €',
-    category: 'Watch',
-    user: '01'
-  },
-  {
-    id: 11,
-    name: 'Lords of the Rings',
-    price: '15 €',
-    category: 'books',
-    user: '01'
-  },
-  {
-    id: 12,
-    name: 'Iron Man',
-    price: '49 €',
-    category: 'movies',
-    user: '01'
-  }
-  ]);
+  const fetchData = () => {
+    getList()
+    .then(items => {
+        setList(items)
+    })}
+  // Brgins the data to set the state to the product list
+  useEffect(() => {
+    fetchData()
+  }, [])
+
+
+  // Brgins the data to set the state to the category list
+  useEffect(() => {
+    let mounted = true;
+    getCategory()
+      .then(category => {
+        if (mounted) {
+          setCategory(category)
+        }
+      })
+    return () => mounted = false;
+  }, [])
+
 
   const columns = [{
-    dataField: 'id',
+    dataField: 'idproducts',
     text: 'Product ID',
     sort: true,
   }, {
@@ -122,12 +64,12 @@ const Table = () => {
     sort: true
   },
   {
-    dataField: 'category',
+    dataField: 'cid',
     text: 'Product category',
     sort: true
   },
   {
-    dataField: 'user',
+    dataField: 'uid',
     text: 'User name',
     sort: true
   },
@@ -139,7 +81,7 @@ const Table = () => {
       return <Actions
         row={row}
         onDelete={deleteItem}
-        onEdit={() => handleEdit(row) }
+        onEdit={() => handleEdit(row)}
       />
     }
   }
@@ -150,32 +92,34 @@ const Table = () => {
     order: 'desc'
   }];
 
-  // el estado de la fila si es distinto a la id que le he pasado la elimina
-  const deleteItem = (id) => {
-    setRow((prevRow) =>
-      prevRow.filter((row) => row.id !== id)
-    )
+  const deleteItem = async (id) => {
+    await fetch(`http://localhost:4040/api/product/${id}`, {
+      method: 'DELETE'
+    })
+    fetchData()
   }
+
 
   return (
     <div style={{ marginLeft: 25, marginRight: 25 }}>
       <div style={{ margin: 10 }}>
-      {/*el toogle muestra el modal */}
+        {/*el toogle muestra el modal */}
         <InsertModal toggle={() => setEditModal(false)} buttonLabel="Insert product" />
       </div>
       <BootstrapTable
         keyField="id"
-        data={row}
+        data={list}
         columns={columns}
         defaultSorted={defaultSorted}
         pagination={paginationFactory()}
       />
       <UpdateModal
+        fetch={() => fetchData}
         isOpen={editModal}
         toggle={() => setEditModal(false)}
         // la prop selected item me carga los datos en el modal
         selectedItem={selectedItem}
-        />
+      />
     </div>
   )
 }

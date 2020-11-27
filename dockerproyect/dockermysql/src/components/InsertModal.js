@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import '../App.css'
+import { setItem } from '../services/list'
+
 
 const InsertModal = (props) => {
     const {
@@ -12,12 +14,27 @@ const InsertModal = (props) => {
     // en el caso del update es distinto porque el boton esta en las acction, este boton esta directamente
     // en la vista de la tabla por lo que puede tener la prop toggle para mostrarlo
     const [modal, setModal] = useState(false);
-    const toggle = () => setModal(!modal);
+    const toggle = () => {
+        setModal(!modal)
+    };
 
     const [name, setName] = useState("");
-    const [price, setPrice] = useState("");
+    const [price, setPrice] = useState();
     const [id, setId] = useState("");
     const [category, setCategory] = useState();
+
+
+    const sendData = () => {
+        setItem(
+            {
+                name: name,
+                price: parseFloat(price),
+                cid: 2,
+                uid: 2,
+            }
+        )
+        toggle()
+    }
 
     // el resto del componente es igual los handler y los value
     const handleName = (e) => {
@@ -57,7 +74,7 @@ const InsertModal = (props) => {
                         <br />
                         <label >Price: </label>
                         <input
-                            type="text"
+                            type="number"
                             placeholder="prodouct price"
                             value={price}
                             onChange={handlePrice}>
@@ -82,7 +99,7 @@ const InsertModal = (props) => {
                     </div>
                 </ModalBody>
                 <ModalFooter>
-                    <Button color="success" onClick={toggle}>Insert product</Button>{' '}
+                    <Button color="success" onClick={sendData}>Insert product</Button>{' '}
                     <Button color="danger" onClick={toggle}>Cancel</Button>
                 </ModalFooter>
             </Modal>

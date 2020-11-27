@@ -2,7 +2,7 @@ CREAR PROYECTO NUEVO CON UNA TABLA QUE SEA LA VISTA DIRECTAMENTE
 
 --------------TABLES--------------
 
-CREATE TABLE `sys`.`products` (
+CREATE TABLE `products` (
   `idproducts` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NOT NULL,
   `price` DECIMAL(6,2) NOT NULL,
@@ -13,12 +13,12 @@ CREATE TABLE `sys`.`products` (
   INDEX `cid_idx` (`cid` ASC) VISIBLE,
   CONSTRAINT `uid`
     FOREIGN KEY (`uid`)
-    REFERENCES `sys`.`users` (`uid`)
+    REFERENCES `users` (`uid`)
     ON DELETE SET NULL
     ON UPDATE SET NULL,
   CONSTRAINT `cid`
     FOREIGN KEY (`cid`)
-    REFERENCES `sys`.`category` (`cid`)
+    REFERENCES `category` (`cid`)
     ON DELETE SET NULL
     ON UPDATE SET NULL);
 

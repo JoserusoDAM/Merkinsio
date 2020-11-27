@@ -1,0 +1,12 @@
+server:
+       port: 4040
+       baseUrl: localhost
+database:
+       url: root:1234@tcp(localhost:3306)/merkinsio
+       user: root
+       password: root
+       host: localhost
+       port: 3306
+       name: merkinsio
+uploads:
+       path: /tmp

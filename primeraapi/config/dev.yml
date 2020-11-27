@@ -1,0 +1,6 @@
+server:
+       port: 4040
+       baseUrl: localhost
+database:
+       url: root:1234@/merkinsio
+environment: development

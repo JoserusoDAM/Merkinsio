@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import '../App.css'
+import { updateItem } from '../services/list'
 
 const UpdateModal = (props) => {
     const {
@@ -8,13 +9,30 @@ const UpdateModal = (props) => {
         isOpen,
         toggle,
         rowEdit,
-        selectedItem
+        selectedItem,
+        fetch
     } = props;
 
     const [name, setName] = useState("");
     const [price, setPrice] = useState("");
     const [id, setId] = useState("");
     const [category, setCategory] = useState();
+    const [idproducts, setIdproducts] = useState()
+
+    const editProduct = () => {
+        updateItem(
+            {
+                idproducts: idproducts,
+                name: name,
+                price: 999,
+                cid: 2,
+                uid: 2,
+            }
+        )
+        fetch()
+        toggle()
+    }
+
 
     // los handlers para que den valor a los estados cuando escribo en los imput
     const handleName = (e) => {
@@ -40,6 +58,7 @@ const UpdateModal = (props) => {
     // este useEffec es de la tabla anterior puede que no sirva
     useEffect(() => {
         if (rowEdit) {
+            setIdproducts(rowEdit.idproducts)
             setName(rowEdit.name)
             setPrice(rowEdit.price)
             setId(rowEdit.user)
@@ -51,6 +70,7 @@ const UpdateModal = (props) => {
     useEffect(
         () => {
             if (selectedItem) {
+                setIdproducts(selectedItem.idproducts)
                 setName(selectedItem.name)
                 setPrice(selectedItem.price)
                 setId(selectedItem.user)
@@ -65,6 +85,8 @@ const UpdateModal = (props) => {
                 <ModalHeader toggle={toggle}>Item description</ModalHeader>
                 <ModalBody>
                     <div>
+                        <label>ID Product: </label>
+                        <input disabled value={idproducts}></input>
                         <label >Name:</label>
                         {/* el onChange me permite darle el estado y el value el valor a ese estado */}
                         <input
@@ -101,7 +123,7 @@ const UpdateModal = (props) => {
                     </div>
                 </ModalBody>
                 <ModalFooter>
-                    <Button color="success" onClick={toggle}>Update product</Button>{' '}
+                    <Button color="success" onClick={editProduct}>Update product</Button>{' '}
                     <Button color="danger" onClick={toggle}>Cancel</Button>
                 </ModalFooter>
             </Modal>
