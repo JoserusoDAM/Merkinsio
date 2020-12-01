@@ -1,7 +1,14 @@
 // gets the products items
-export async function getList() {
-  const data = await fetch('http://localhost:4040/api/product/')
-  return await data.json()
+export function getList(done = () => { }) {
+  fetch('http://localhost:4040/api/product/')
+    .then(res => res.json())
+    .then((data) => {
+      done(data)
+    })
+    .catch((error) => {
+      window.alert(error)
+      done(null, error)
+    })
 }
 
 // sends data to the api

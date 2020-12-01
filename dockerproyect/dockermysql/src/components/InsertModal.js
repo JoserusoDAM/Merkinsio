@@ -1,14 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import '../App.css'
 import { setItem } from '../services/list'
-import { getList, getCategory } from '../services/list'
+
 
 
 const InsertModal = (props) => {
     const {
         buttonLabel,
-        className
+        className,
+        fetchData
     } = props;
 
     // state of the modal to show ir or dispose it
@@ -19,53 +20,30 @@ const InsertModal = (props) => {
 
     // inputs states
     const [name, setName] = useState("");
-    const [price, setPrice] = useState();
+    const [price, setPrice] = useState("");
     const [id, setId] = useState("");
-    const [category, setCategory] = useState();
-
-    // state from the api
-    const [list, setList] = useState([]);
-    const fetchData = () => {
-        getList()
-        .then(items => {
-            setList(items)
-        })}
-      // Brgins the data to set the state to the product list
-      useEffect(() => {
-        fetchData()
-      }, [])
+    const [category, setCategory] = useState("");
 
     // fuction to send the data to the db
     const sendData = async () => {
-        await  setItem(
-            {
-                name: name,
-                price: parseFloat(price),
-                cid: parseInt(category),
-                uid: 1,
-            }
-        )
-        fetchData()
-        toggle()
+        console.log(category)
+        //    checks blank fields
+        if (name === "" || price === "" || category === "" || id === "0") {
+            alert("Campo vacio")
+        } else {
+            await setItem(
+                {
+                    name: name,
+                    price: parseFloat(price),
+                    uid: 1,
+                    cid: parseInt(category)
+                }
+            )
+            fetchData()
+            toggle()
+        }
     }
-    
-    /*
-    const sendData = () => {
-        setItem(
-               {
-                   name: name,
-                   price: parseFloat(price),
-                   cid: 1,
-                   uid: 1,
-               },
-               (data) => {
-                   fetchData()
-           toggle()
-               }
-           )
-   
-       }
-       */
+
     // handlers from the inputs
     const handleName = (e) => {
         e.preventDefault()
@@ -99,7 +77,9 @@ const InsertModal = (props) => {
                             type="text"
                             placeholder="Prodouct name"
                             value={name}
-                            onChange={handleName}>
+                            onChange={handleName}
+                            required
+                        >
                         </input>
                         <br />
                         <label >Price: </label>
@@ -107,7 +87,9 @@ const InsertModal = (props) => {
                             type="number"
                             placeholder="Prodouct price"
                             value={price}
-                            onChange={handlePrice}>
+                            onChange={handlePrice}
+                            required
+                        >
                         </input>
                         <br />
                         <label >User ID:</label>
@@ -117,11 +99,12 @@ const InsertModal = (props) => {
                             value={id}
                             onChange={handleId}
                             disabled
-                            >
+                        >
                         </input>
                         <br />
                         <label>Category</label>
                         <select onChange={handleCategory} value={category} name="category">
+                            <option selected value="" >--Select a category--</option>
                             <option value="1">Food</option>
                             <option value="2">Books</option>
                             <option value="3">Movies</option>

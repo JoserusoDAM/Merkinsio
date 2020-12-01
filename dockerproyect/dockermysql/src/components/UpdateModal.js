@@ -16,21 +16,26 @@ const UpdateModal = (props) => {
     const [name, setName] = useState("");
     const [price, setPrice] = useState("");
     const [id, setId] = useState("");
-    const [category, setCategory] = useState();
-    const [idproducts, setIdproducts] = useState()
+    const [category, setCategory] = useState("");
+    const [idproducts, setIdproducts] = useState("")
 
     const editProduct = async () => {
-        await updateItem(
-            {
-                idproducts: idproducts,
-                name: name,
-                price: parseInt(price),
-                cid: parseInt(category),
-                uid: 2,
-            }
-        )
-        fetch()
-        toggle()
+        //    checks blank fields
+        if (name === "" || price === "" || category === "" || id === "0") {
+            alert("Campo vacio")
+        } else {
+            await updateItem(
+                {
+                    idproducts: idproducts,
+                    name: name,
+                    price: parseInt(price),
+                    cid: parseInt(category),
+                    uid: 2,
+                }
+            )
+            fetch()
+            toggle()
+        }
     }
 
     // los handlers para que den valor a los estados cuando escribo en los imput
@@ -87,20 +92,23 @@ const UpdateModal = (props) => {
                         <label>ID Product: </label>
                         <input disabled value={idproducts}></input>
                         <label >Name:</label>
-                        {/* el onChange me permite darle el estado y el value el valor a ese estado */}
                         <input
                             type="text"
                             placeholder="prodouct name"
                             value={name}
-                            onChange={handleName}>
+                            onChange={handleName}
+                            required
+                        >
                         </input>
                         <br />
                         <label >Price: </label>
                         <input
-                            type="text"
+                            type="number"
                             placeholder="prodouct price"
                             value={price}
-                            onChange={handlePrice}>
+                            onChange={handlePrice}
+                            required
+                        >
                         </input>
                         <br />
                         <label >User ID:</label>
@@ -110,7 +118,7 @@ const UpdateModal = (props) => {
                             value={id}
                             onChange={handleId}
                             disabled
-                            >
+                        >
                         </input>
                         <br />
                         <label>Category</label>

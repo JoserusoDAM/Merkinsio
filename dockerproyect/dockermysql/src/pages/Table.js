@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 
 import BootstrapTable from 'react-bootstrap-table-next';
 import paginationFactory from 'react-bootstrap-table2-paginator';
@@ -6,13 +6,13 @@ import paginationFactory from 'react-bootstrap-table2-paginator';
 import InsertModal from '../components/InsertModal'
 import UpdateModal from '../components/UpdateModal'
 import Actions from '../components/Actions'
-import { getList, getCategory } from '../services/list'
+import { getList } from '../services/list'
 
 
 const Table = () => {
   // states from the api
   const [list, setList] = useState([]);
-  const [category, setCategory] = useState([]);
+  //const [category, setCategory] = useState([]);
 
   // selected item state to gives it to the modal
   const [selectedItem, setSelectedItem] = useState();
@@ -26,36 +26,41 @@ const Table = () => {
   }
 
   // brings the data from the appi
-  const fetchData = () => {
-    getList()
-    .then(items => {
-      console.log(items)
-        setList(items)
-    })}
+  // const fetchData = () => {
+  //   getList()
+  //   .then(items => {
+  //     console.log(items)
+  //       setList(items)
+  //   })}
 
+  // using the hook useCallback to get the data from the api
+  const fetchData = useCallback(() => {
+    getList((data) => {
+      if (data) {
+        setList(data)
+      }
+    })
+  }, [])
+
+  // rerender after an edit
   useEffect(() => {
     fetchData()
-  }, [])
+  }, [fetchData, editModal])
 
-
-  // Brgins the data to set the state to the category list
-  useEffect(() => {
-    let mounted = true;
-    getCategory()
-      .then(category => {
-        if (mounted) {
-          setCategory(category)
-        }
-      })
-    return () => mounted = false;
-  }, [])
+  const insert = () => {
+    fetchData()
+  }
 
   // Api call to delete the item then fetch the new data
   const deleteItem = async (id) => {
-    await fetch(`http://localhost:4040/api/product/${id}`, {
-      method: 'DELETE'
-    })
-    fetchData()
+    try {
+      await fetch(`http://localhost:4040/api/product/${id}`, {
+        method: 'DELETE'
+      })
+      fetchData()
+    } catch (err) {
+      window.alert("Error: " + err)
+    }
   }
 
   const columns = [{
@@ -72,13 +77,13 @@ const Table = () => {
     sort: true
   },
   {
-    dataField: 'category',  // aqui seria name de categoria
+    dataField: 'category',
     text: 'Product category',
     sort: true
   },
   {
     dataField: 'uid',
-    text: 'User name',
+    text: 'User id',
     sort: true
   },
   {
@@ -100,13 +105,15 @@ const Table = () => {
     order: 'asc'
   }];
 
+
+
   return (
     <div style={{ marginLeft: 25, marginRight: 25 }}>
       <div style={{ margin: 10 }}>
-        <InsertModal toggle={() => setEditModal(false)} buttonLabel="Insert product" />
+        <InsertModal fetchData={insert} buttonLabel="Insert product" />
       </div>
       <BootstrapTable
-        keyField="id"
+        keyField="idproducts"
         data={list}
         columns={columns}
         defaultSorted={defaultSorted}
